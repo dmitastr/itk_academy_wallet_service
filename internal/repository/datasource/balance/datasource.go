@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/service/balance"
+	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
 type IDatasource interface {
-	UpdateBalance(ctx context.Context, increment *balance.WalletIncrement) error
-	GetBalance(ctx context.Context, walletID uuid.UUID) (*balance.WalletIncrement, error)
+	UpdateBalance(ctx context.Context, increment *models.WalletIncrement) error
+	GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletIncrement, error)
 }
 
 type Datasource struct {
@@ -27,7 +27,7 @@ func NewDatasource(pool *pgxpool.Pool, log *logrus.Logger) IDatasource {
 	}
 }
 
-func (d Datasource) UpdateBalance(ctx context.Context, increment *balance.WalletIncrement) error {
+func (d Datasource) UpdateBalance(ctx context.Context, increment *models.WalletIncrement) error {
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
@@ -51,7 +51,7 @@ func (d Datasource) UpdateBalance(ctx context.Context, increment *balance.Wallet
 	return nil
 }
 
-func (d Datasource) GetBalance(ctx context.Context, walletID uuid.UUID) (*balance.WalletIncrement, error) {
+func (d Datasource) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletIncrement, error) {
 	// TODO implement me
 	panic("implement me")
 }

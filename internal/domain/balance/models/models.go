@@ -1,4 +1,4 @@
-package balance
+package models
 
 import (
 	"github.com/dmitastr/itk_academy_wallet_service/internal/core"
@@ -33,4 +33,25 @@ func (i WalletIncrement) CorrectedAmount() error {
 type WalletBalance struct {
 	WalletID uuid.UUID
 	Amount   int64
+}
+
+func (wb WalletBalance) IsSufficientFunds(wi *WalletIncrement) error {
+	switch wi.OperationType {
+	case core.OperationTypeDeposit:
+		return nil
+	case core.OperationTypeWithdraw:
+		if wb.Amount < abs(wi.Amount) {
+			return core.ErrInsufficientFunds
+		}
+	default:
+		return core.ErrInvalidOperationType
+	}
+	return nil
+}
+
+func abs(x int64) int64 {
+	if x < 0 {
+		return -x
+	}
+	return x
 }

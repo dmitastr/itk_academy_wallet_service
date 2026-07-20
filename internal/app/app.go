@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dmitastr/itk_academy_wallet_service/internal/config"
-	balance2 "github.com/dmitastr/itk_academy_wallet_service/internal/domain/service/balance"
+	balance2 "github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/service"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/presentation/balance"
 	balance3 "github.com/dmitastr/itk_academy_wallet_service/internal/repository/datasource/balance"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/migrations"

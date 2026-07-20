@@ -3,7 +3,7 @@ package balance
 import (
 	"net/http"
 
-	. "github.com/dmitastr/itk_academy_wallet_service/internal/domain/service/balance"
+	. "github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/service"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
