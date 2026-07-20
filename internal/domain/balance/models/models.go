@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/dmitastr/itk_academy_wallet_service/internal/core"
 	"github.com/google/uuid"
 )
@@ -31,8 +33,9 @@ func (i WalletIncrement) CorrectedAmount() error {
 }
 
 type WalletBalance struct {
-	WalletID uuid.UUID
-	Amount   int64
+	WalletID      uuid.UUID
+	Amount        int64
+	UpdatedAtLast time.Time
 }
 
 func (wb WalletBalance) IsSufficientFunds(wi *WalletIncrement) error {

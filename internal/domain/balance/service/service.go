@@ -48,6 +48,11 @@ func (w WalletService) UpdateBalance(ctx context.Context, walletIncrement *model
 }
 
 func (w WalletService) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
-	// TODO implement me
-	panic("implement me")
+	balance, err := w.ds.GetBalance(ctx, walletID)
+	if err != nil {
+		w.log.WithError(err).Errorln("GetBalance failed")
+		return nil, err
+	}
+
+	return balance, nil
 }

@@ -11,9 +11,14 @@ type IncrementRequest struct {
 	Amount        int64              `json:"amount"`
 }
 
-type BalanceResoponse struct {
-	WalletID uuid.UUID `json:"valletId"`
-	Balance  int64     `json:"balance"`
+type BalanceResponse struct {
+	WalletID  string `json:"valletId"`
+	Amount    int64  `json:"amount"`     // строка, чтобы не терять точность
+	UpdatedAt string `json:"updated_at"` // RFC3339
+}
+
+type SuccessResponse struct {
+	Data any `json:"data"`
 }
 
 type ErrorResponse struct {

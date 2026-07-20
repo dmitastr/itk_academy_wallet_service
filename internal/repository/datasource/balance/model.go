@@ -3,11 +3,20 @@ package balance
 import (
 	"time"
 
+	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
 	"github.com/google/uuid"
 )
 
 type transactionRow struct {
-	WalletID  uuid.UUID `db:"wallet_id"`
-	Amount    int64     `db:"amount"`
-	CreatedAt time.Time `db:"created_at"`
+	WalletID      uuid.UUID `db:"wallet_id"`
+	Balance       int64     `db:"balance"`
+	UpdatedAtLast time.Time `db:"updated_at"`
+}
+
+func (r transactionRow) toDomain() *models.WalletBalance {
+	return &models.WalletBalance{
+		WalletID:      r.WalletID,
+		Amount:        r.Balance,
+		UpdatedAtLast: r.UpdatedAtLast,
+	}
 }

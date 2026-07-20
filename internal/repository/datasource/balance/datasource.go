@@ -2,17 +2,20 @@ package balance
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/dmitastr/itk_academy_wallet_service/internal/core"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
 type IDatasource interface {
 	UpdateBalance(ctx context.Context, increment *models.WalletIncrement) error
-	GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletIncrement, error)
+	GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error)
 }
 
 type Datasource struct {
@@ -51,7 +54,24 @@ func (d Datasource) UpdateBalance(ctx context.Context, increment *models.WalletI
 	return nil
 }
 
-func (d Datasource) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletIncrement, error) {
-	// TODO implement me
-	panic("implement me")
+func (d Datasource) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
+	rows, err := d.pool.Query(ctx, `
+		SELECT wallet_id, COALESCE(SUM(amount), 0) AS balance, MAX(updated_at) AS updated_at
+		FROM wallet_transactions
+		WHERE wallet_id = $1
+		GROUP BY wallet_id`, walletID)
+
+	if err != nil {
+		return nil, fmt.Errorf("query rows: %w", err)
+	}
+
+	row, err := pgx.CollectExactlyOneRow(rows, pgx.RowToStructByName[transactionRow])
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, core.ErrWalletNotFound
+		}
+		return nil, fmt.Errorf("query row: %w", err)
+	}
+
+	return row.toDomain(), nil
 }

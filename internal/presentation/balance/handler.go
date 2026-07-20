@@ -3,8 +3,10 @@ package balance
 import (
 	"net/http"
 
+	"github.com/dmitastr/itk_academy_wallet_service/internal/core"
 	. "github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/service"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -41,11 +43,29 @@ func (w WalletHandlers) UpdateBalance(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 	}
 
-	ctx.JSON(http.StatusNoContent, request)
-
+	ctx.JSON(http.StatusOK, SuccessResponse{Data: request})
 }
 
 func (w WalletHandlers) GetBalance(ctx *gin.Context) {
-	// TODO implement me
-	panic("implement me")
+	walletID := ctx.Param("wallet_id")
+	if walletID == "" {
+		w.log.Error(core.ErrMissingWalletID.Error())
+		ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: core.ErrMissingWalletID.Error()})
+		return
+	}
+
+	walletUUID, err := uuid.FromBytes([]byte(walletID))
+	if err != nil {
+		w.log.WithError(err).Error("error converting wallet uuid")
+		ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: core.ErrInvalidWalletID.Error()})
+		return
+	}
+	balance, err := w.service.GetBalance(ctx, walletUUID)
+	if err != nil {
+		w.HandleServiceError(ctx, err)
+		w.log.WithError(err).Error("failed to get balance")
+		ctx.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+	}
+
+	ctx.JSON(http.StatusOK, SuccessResponse{Data: ToResponse(balance)})
 }
