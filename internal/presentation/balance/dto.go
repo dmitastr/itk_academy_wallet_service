@@ -14,7 +14,7 @@ type IncrementRequest struct {
 type BalanceResponse struct {
 	WalletID  string `json:"valletId"`
 	Balance   int64  `json:"balance"`
-	UpdatedAt string `json:"updated_at"`
+	UpdatedAt string `json:"updated_at,omitempty"`
 }
 
 type SuccessResponse struct {

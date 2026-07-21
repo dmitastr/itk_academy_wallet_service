@@ -44,6 +44,7 @@ func (w WalletService) AddDeposit(ctx context.Context, walletIncrement *models.W
 }
 
 func (w WalletService) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
+	w.log.WithField("wallet_id", walletID).Debugln("GetBalance")
 	balance, err := w.ds.GetBalance(ctx, walletID)
 	if err != nil {
 		w.log.WithError(err).Errorln("GetBalance failed")

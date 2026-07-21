@@ -116,6 +116,7 @@ func TestWalletHandlers_GetBalance(t *testing.T) {
 					Return(&models.WalletBalance{WalletID: walletID, Amount: 1}, nil)
 			},
 			expectedStatus: http.StatusOK,
+			expectedBody:   fmt.Sprintf(`{"data": {"balance": 1, "valletId": "%s"}}`, walletID),
 		},
 		{
 			name:     "wallet not found",
@@ -150,6 +151,9 @@ func TestWalletHandlers_GetBalance(t *testing.T) {
 			router.ServeHTTP(w, req)
 
 			assert.Equal(t, tt.expectedStatus, w.Code)
+			if tt.expectedBody != "" {
+				assert.JSONEq(t, tt.expectedBody, w.Body.String())
+			}
 		})
 	}
 }
