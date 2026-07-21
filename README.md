@@ -71,7 +71,7 @@ cp config.env.example config.env
 ### 2. Запуск через docker-compose
 
 ```bash
-docker compose up --build -d
+docker compose --env-file config.env up -d --build
 ```
 
 Поднимет сервис на `http://localhost:8080` и PostgreSQL. Миграции применяются автоматически при старте приложения (встроены в бинарник через `go:embed`).
@@ -115,14 +115,6 @@ docker compose up --build -d
 ### Интеграционные тесты
 
 Поднимают реальный PostgreSQL в Docker через `testcontainers-go`, применяют миграции и проверяют поведение репозитория и конкурентную безопасность против настоящей БД.
-
-### Покрытие тестами
-
-```bash
-make coverage
-```
-
-Сгенерирует `coverage.html` с построчной подсветкой покрытого/непокрытого кода.
 
 ## Нагрузочное тестирование
 
