@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -12,27 +13,25 @@ type ConfigProvider interface {
 }
 
 type Config struct {
-	AppHost  string `mapstructure:"HOST"`
-	AppPort  string `mapstructure:"PORT"`
+	AppHost  string `mapstructure:"APP_HOST"`
+	AppPort  string `mapstructure:"APP_PORT"`
 	DbConfig *DBConfig
 }
 
 func NewConfig() (*Config, error) {
 	viper.AutomaticEnv()
 
-	_ = viper.BindEnv("PORT")
-	_ = viper.BindEnv("HOST")
+	_ = viper.BindEnv("APP_PORT")
+	_ = viper.BindEnv("APP_HOST")
 	_ = viper.BindEnv("DB_PORT")
 	_ = viper.BindEnv("DB_HOST")
-	_ = viper.BindEnv("DB_USER")
-	_ = viper.BindEnv("DB_PASSWORD")
-	_ = viper.BindEnv("DB_NAME")
+	_ = viper.BindEnv("POSTGRES_USER")
+	_ = viper.BindEnv("POSTGRES_PASSWORD")
+	_ = viper.BindEnv("POSTGRES_DB")
 
 	var config Config
 	var dbConfig DBConfig
 
-	viper.SetConfigFile(".env")
-	viper.SetConfigType("env")
 	if err := viper.ReadInConfig(); err != nil {
 		if !errors.As(err, &viper.ConfigFileNotFoundError{}) {
 			return nil, fmt.Errorf("error reading config file, %s", err)
@@ -45,12 +44,8 @@ func NewConfig() (*Config, error) {
 		return nil, fmt.Errorf("unable to decode dbConfig, %v", err)
 	}
 
-	if config.AppHost == "" {
-		config.AppHost = "localhost"
-	}
-	if config.AppPort == "" {
-		config.AppPort = "8080"
-	}
+	config.AppHost = "0.0.0.0"
+	config.AppPort = "8080"
 
 	config.DbConfig = &dbConfig
 
@@ -68,9 +63,9 @@ func (c *Config) GetDBConfig() *DBConfig {
 type DBConfig struct {
 	Host string `mapstructure:"DB_HOST"`
 	Port string `mapstructure:"DB_PORT"`
-	User string `mapstructure:"DB_USER"`
-	Pass string `mapstructure:"DB_PASSWORD"`
-	Name string `mapstructure:"DB_NAME"`
+	User string `mapstructure:"POSTGRES_USER"`
+	Pass string `mapstructure:"POSTGRES_PASSWORD"`
+	Name string `mapstructure:"POSTGRES_DB"`
 }
 
 func (dbConfig *DBConfig) GetConnString() string {

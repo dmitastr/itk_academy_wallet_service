@@ -6,14 +6,19 @@ import (
 )
 
 type IncrementRequest struct {
-	WalletID      uuid.UUID          `json:"valletId"`
-	OperationType core.OperationType `json:"operationType"`
-	Amount        int64              `json:"amount"`
+	WalletID      uuid.UUID          `json:"valletId" binding:"required,uuid4"`
+	OperationType core.OperationType `json:"operationType" binding:"required"`
+	Amount        int64              `json:"amount" binding:"required"`
 }
 
-type BalanceResoponse struct {
-	WalletID uuid.UUID `json:"valletId"`
-	Balance  int64     `json:"balance"`
+type BalanceResponse struct {
+	WalletID  string `json:"valletId"`
+	Balance   int64  `json:"balance"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+}
+
+type SuccessResponse struct {
+	Data any `json:"data"`
 }
 
 type ErrorResponse struct {

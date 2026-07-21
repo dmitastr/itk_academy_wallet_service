@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/dmitastr/itk_academy_wallet_service/internal/config"
+	"github.com/dmitastr/itk_academy_wallet_service/migrations"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/sirupsen/logrus"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -18,8 +19,8 @@ import (
 )
 
 // Run applies all pending migrations inside a single transaction per step.
-func Run(ctx context.Context, config *config.DBConfig, log *logrus.Logger) (*pgxpool.Pool, error) {
-	dbConfig, err := pgxpool.ParseConfig(config.GetConnString())
+func Run(ctx context.Context, connString string, log *logrus.Logger) (*pgxpool.Pool, error) {
+	dbConfig, err := pgxpool.ParseConfig(connString)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse database config: %w", err)
 	}
@@ -36,9 +37,12 @@ func Run(ctx context.Context, config *config.DBConfig, log *logrus.Logger) (*pgx
 	}
 	log.Info("Database connection pool established")
 
-	m, err := migrate.New(
-		"file://migrations/migrations_scripts",
-		config.GetConnString())
+	d, err := iofs.New(migrations.FS, ".")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create database migrations fs: %w", err)
+	}
+
+	m, err := migrate.NewWithSourceInstance("iofs", d, connString)
 	if err != nil {
 		return nil, err
 	}
