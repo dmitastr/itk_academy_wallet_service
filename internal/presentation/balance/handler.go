@@ -24,8 +24,10 @@ func NewWalletHandlers(service IWalletService, logger *logrus.Logger) IWalletHan
 	return &WalletHandlers{service: service, log: logger}
 }
 
-// AddTransaction handles adding new transaction to the wallet
+// AddTransaction handles adding new transaction to the wallet with ID
 func (w WalletHandlers) AddTransaction(ctx *gin.Context) {
+	w.log.Debug("AddTransaction handler: start")
+
 	var request IncrementRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		w.log.WithError(err).Error("failed to bind request body")
@@ -45,11 +47,13 @@ func (w WalletHandlers) AddTransaction(ctx *gin.Context) {
 		return
 	}
 
+	w.log.Debug("AddTransaction handler: end")
 	ctx.JSON(http.StatusOK, SuccessResponse{Data: request})
 }
 
-// GetBalance handles getting balance of a wallet
+// GetBalance handles getting balance of a wallet by ID
 func (w WalletHandlers) GetBalance(ctx *gin.Context) {
+	w.log.Debug("GetBalance handler: start")
 	walletID := ctx.Param("walletID")
 	if walletID == "" {
 		w.log.Error(core.ErrMissingWalletID.Error())
@@ -70,5 +74,6 @@ func (w WalletHandlers) GetBalance(ctx *gin.Context) {
 		return
 	}
 
+	w.log.Debug("GetBalance handler: end")
 	ctx.JSON(http.StatusOK, SuccessResponse{Data: ToResponse(balance)})
 }

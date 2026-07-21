@@ -33,6 +33,7 @@ func NewDatasource(pool *pgxpool.Pool, log *logrus.Logger) IDatasource {
 
 // AddWithdrawal checks if there is sufficient amount and adds new withdrawal
 func (d Datasource) AddWithdrawal(ctx context.Context, increment *models.WalletIncrement) error {
+	d.log.WithField("walletID", increment.WalletID).WithField("amount", increment.Amount).Info("adding withdrawal to db")
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
@@ -66,8 +67,10 @@ func (d Datasource) AddWithdrawal(ctx context.Context, increment *models.WalletI
 	return nil
 }
 
-// AddTransaction adds new deposit
+// AddDeposit adds new deposit
 func (d Datasource) AddDeposit(ctx context.Context, increment *models.WalletIncrement) error {
+	d.log.WithField("walletID", increment.WalletID).WithField("amount", increment.Amount).Info("adding deposit to db")
+
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
@@ -88,6 +91,8 @@ func (d Datasource) AddDeposit(ctx context.Context, increment *models.WalletIncr
 
 // GetBalance get current balance as sum of all transactions
 func (d Datasource) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
+	d.log.WithField("walletID", walletID).Info("getting balance for wallet from db")
+
 	rows, err := d.pool.Query(ctx, `
 		SELECT wallet_id, COALESCE(SUM(amount), 0) AS balance, MAX(created_at) AS updated_at
 		FROM wallet_transactions

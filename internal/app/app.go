@@ -52,7 +52,7 @@ func NewWalletServiceApp(ctx context.Context, cfg config.ConfigProvider, log *lo
 }
 
 func (app *WalletServiceApp) Start() error {
-	app.log.Info("starting server")
+	app.log.WithField("address", app.cfg.GetAddress()).Info("Starting server")
 	if err := app.server.ListenAndServe(); err != nil {
 		return fmt.Errorf("start server failed: %s", err)
 	}
@@ -60,6 +60,7 @@ func (app *WalletServiceApp) Start() error {
 }
 
 func (app *WalletServiceApp) Stop(ctx context.Context) error {
+	app.log.WithField("address", app.cfg.GetAddress()).Info("Stopping server")
 	shutdownCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

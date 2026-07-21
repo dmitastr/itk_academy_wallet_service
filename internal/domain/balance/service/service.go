@@ -26,6 +26,7 @@ func NewWalletService(ds datasrouce.IDatasource, log *logrus.Logger) IWalletServ
 
 // AddTransaction handles correcting transaction amount and selecting appropriate db method
 func (w WalletService) AddTransaction(ctx context.Context, walletIncrement *models.WalletIncrement) error {
+	w.log.Debugf("adding transaction for wallet increment %+v", walletIncrement.WalletID)
 	if err := walletIncrement.CorrectedAmount(); err != nil {
 		w.log.WithError(err).Errorln("Correction amount failed")
 		return err
@@ -46,7 +47,7 @@ func (w WalletService) AddTransaction(ctx context.Context, walletIncrement *mode
 
 // GetBalance fetches balance of a wallet from db
 func (w WalletService) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
-	w.log.WithField("wallet_id", walletID).Debugln("GetBalance")
+	w.log.WithField("wallet_id", walletID).Debugln("getting balance for wallet")
 	balance, err := w.ds.GetBalance(ctx, walletID)
 	if err != nil {
 		w.log.WithError(err).Errorln("GetBalance failed")
