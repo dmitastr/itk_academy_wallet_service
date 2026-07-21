@@ -44,12 +44,8 @@ func NewConfig() (*Config, error) {
 		return nil, fmt.Errorf("unable to decode dbConfig, %v", err)
 	}
 
-	if config.AppHost == "" {
-		config.AppHost = "0.0.0.0"
-	}
-	if config.AppPort == "" {
-		config.AppPort = "8080"
-	}
+	config.AppHost = "0.0.0.0"
+	config.AppPort = "8080"
 
 	config.DbConfig = &dbConfig
 
