@@ -24,6 +24,7 @@ func NewWalletService(ds datasrouce.IDatasource, log *logrus.Logger) IWalletServ
 	return &WalletService{ds: ds, log: log}
 }
 
+// AddTransaction handles correcting transaction amount and selecting appropriate db method
 func (w WalletService) AddTransaction(ctx context.Context, walletIncrement *models.WalletIncrement) error {
 	if err := walletIncrement.CorrectedAmount(); err != nil {
 		w.log.WithError(err).Errorln("Correction amount failed")
@@ -33,7 +34,7 @@ func (w WalletService) AddTransaction(ctx context.Context, walletIncrement *mode
 	var err error
 	switch walletIncrement.OperationType {
 	case core.OperationTypeDeposit:
-		err = w.ds.AddTransaction(ctx, walletIncrement)
+		err = w.ds.AddDeposit(ctx, walletIncrement)
 	case core.OperationTypeWithdraw:
 		err = w.ds.AddWithdrawal(ctx, walletIncrement)
 	default:
@@ -43,6 +44,7 @@ func (w WalletService) AddTransaction(ctx context.Context, walletIncrement *mode
 	return err
 }
 
+// GetBalance fetches balance of a wallet from db
 func (w WalletService) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
 	w.log.WithField("wallet_id", walletID).Debugln("GetBalance")
 	balance, err := w.ds.GetBalance(ctx, walletID)

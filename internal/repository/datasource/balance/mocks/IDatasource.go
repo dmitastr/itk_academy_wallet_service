@@ -24,11 +24,11 @@ func (_m *IDatasource) EXPECT() *IDatasource_Expecter {
 }
 
 // AddDeposit provides a mock function with given fields: ctx, increment
-func (_m *IDatasource) AddTransaction(ctx context.Context, increment *models.WalletIncrement) error {
+func (_m *IDatasource) AddDeposit(ctx context.Context, increment *models.WalletIncrement) error {
 	ret := _m.Called(ctx, increment)
 
 	if len(ret) == 0 {
-		panic("no return value specified for AddTransaction")
+		panic("no return value specified for AddDeposit")
 	}
 
 	var r0 error
@@ -41,7 +41,7 @@ func (_m *IDatasource) AddTransaction(ctx context.Context, increment *models.Wal
 	return r0
 }
 
-// IDatasource_AddDeposit_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddTransaction'
+// IDatasource_AddDeposit_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddDeposit'
 type IDatasource_AddDeposit_Call struct {
 	*mock.Call
 }
@@ -50,7 +50,7 @@ type IDatasource_AddDeposit_Call struct {
 //   - ctx context.Context
 //   - increment *models.WalletIncrement
 func (_e *IDatasource_Expecter) AddDeposit(ctx interface{}, increment interface{}) *IDatasource_AddDeposit_Call {
-	return &IDatasource_AddDeposit_Call{Call: _e.mock.On("AddTransaction", ctx, increment)}
+	return &IDatasource_AddDeposit_Call{Call: _e.mock.On("AddDeposit", ctx, increment)}
 }
 
 func (_c *IDatasource_AddDeposit_Call) Run(run func(ctx context.Context, increment *models.WalletIncrement)) *IDatasource_AddDeposit_Call {

@@ -24,7 +24,7 @@ func (_m *IWalletService) EXPECT() *IWalletService_Expecter {
 	return &IWalletService_Expecter{mock: &_m.Mock}
 }
 
-// AddDeposit provides a mock function with given fields: ctx, walletIncrement
+// AddTransaction provides a mock function with given fields: ctx, walletIncrement
 func (_m *IWalletService) AddTransaction(ctx context.Context, walletIncrement *models.WalletIncrement) error {
 	ret := _m.Called(ctx, walletIncrement)
 
@@ -42,31 +42,31 @@ func (_m *IWalletService) AddTransaction(ctx context.Context, walletIncrement *m
 	return r0
 }
 
-// IWalletService_AddDeposit_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddTransaction'
-type IWalletService_AddDeposit_Call struct {
+// IWalletService_AddTransaction_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddTransaction'
+type IWalletService_AddTransaction_Call struct {
 	*mock.Call
 }
 
-// AddDeposit is a helper method to define mock.On call
+// AddTransaction is a helper method to define mock.On call
 //   - ctx context.Context
 //   - walletIncrement *models.WalletIncrement
-func (_e *IWalletService_Expecter) AddDeposit(ctx interface{}, walletIncrement interface{}) *IWalletService_AddDeposit_Call {
-	return &IWalletService_AddDeposit_Call{Call: _e.mock.On("AddTransaction", ctx, walletIncrement)}
+func (_e *IWalletService_Expecter) AddTransaction(ctx interface{}, walletIncrement interface{}) *IWalletService_AddTransaction_Call {
+	return &IWalletService_AddTransaction_Call{Call: _e.mock.On("AddTransaction", ctx, walletIncrement)}
 }
 
-func (_c *IWalletService_AddDeposit_Call) Run(run func(ctx context.Context, walletIncrement *models.WalletIncrement)) *IWalletService_AddDeposit_Call {
+func (_c *IWalletService_AddTransaction_Call) Run(run func(ctx context.Context, walletIncrement *models.WalletIncrement)) *IWalletService_AddTransaction_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(*models.WalletIncrement))
 	})
 	return _c
 }
 
-func (_c *IWalletService_AddDeposit_Call) Return(_a0 error) *IWalletService_AddDeposit_Call {
+func (_c *IWalletService_AddTransaction_Call) Return(_a0 error) *IWalletService_AddTransaction_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *IWalletService_AddDeposit_Call) RunAndReturn(run func(context.Context, *models.WalletIncrement) error) *IWalletService_AddDeposit_Call {
+func (_c *IWalletService_AddTransaction_Call) RunAndReturn(run func(context.Context, *models.WalletIncrement) error) *IWalletService_AddTransaction_Call {
 	_c.Call.Return(run)
 	return _c
 }

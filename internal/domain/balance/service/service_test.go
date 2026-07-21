@@ -30,9 +30,9 @@ func TestWalletService_GetBalance(t *testing.T) {
 			mockSetup: func(m *mocks.IDatasource) {
 				m.EXPECT().
 					GetBalance(mock.Anything, walletID).
-					Return(&models.WalletBalance{WalletID: walletID, Amount: 1}, nil)
+					Return(&models.WalletBalance{WalletID: walletID, Balance: 1}, nil)
 			},
-			expectedBalance: &models.WalletBalance{WalletID: walletID, Amount: 1},
+			expectedBalance: &models.WalletBalance{WalletID: walletID, Balance: 1},
 			expectedError:   nil,
 		},
 		{
@@ -73,7 +73,7 @@ func TestWalletService_GetBalance(t *testing.T) {
 	}
 }
 
-func TestWalletService_AddDeposit(t *testing.T) {
+func TestWalletService_AddTransaction(t *testing.T) {
 	walletID := uuid.New()
 
 	tests := []struct {

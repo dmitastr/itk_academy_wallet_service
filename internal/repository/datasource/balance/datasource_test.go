@@ -117,7 +117,7 @@ func (s *DatasourceTestSuite) TestDatasource_GetBalance() {
 				assert.Equal(s.T(), tt.expectedError.Error(), err.Error())
 				return
 			}
-			assert.Equal(s.T(), tt.expectedAmount, balance.Amount)
+			assert.Equal(s.T(), tt.expectedAmount, balance.Balance)
 		})
 	}
 
@@ -130,7 +130,7 @@ func (s *DatasourceTestSuite) TestDatasource_AddDeposit_Success() {
 		Amount:   100,
 	}
 
-	err := s.repository.AddTransaction(context.Background(), increment)
+	err := s.repository.AddDeposit(context.Background(), increment)
 	s.Require().NoError(err)
 
 	count, sum := s.countTransactions(walletID)
@@ -149,7 +149,7 @@ func (s *DatasourceTestSuite) TestAddDeposit_ConcurrentInserts_NoneLost() {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			err := s.repository.AddTransaction(context.Background(), &models.WalletIncrement{
+			err := s.repository.AddDeposit(context.Background(), &models.WalletIncrement{
 				WalletID: walletID,
 				Amount:   1,
 			})

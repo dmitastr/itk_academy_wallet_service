@@ -16,7 +16,7 @@ type transactionRow struct {
 func (r transactionRow) toDomain() *models.WalletBalance {
 	return &models.WalletBalance{
 		WalletID:      r.WalletID,
-		Amount:        r.Balance,
+		Balance:       r.Balance,
 		UpdatedAtLast: r.UpdatedAtLast,
 	}
 }

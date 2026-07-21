@@ -13,6 +13,7 @@ type WalletIncrement struct {
 	OperationType core.OperationType
 }
 
+// CorrectedAmount fix any amount anomalies and make it positive for deposit and negative for withdrawal
 func (i *WalletIncrement) CorrectedAmount() error {
 	var sign int64 = 1
 	switch i.OperationType {
@@ -34,22 +35,8 @@ func (i *WalletIncrement) GetAbsAmount() int64 {
 
 type WalletBalance struct {
 	WalletID      uuid.UUID
-	Amount        int64
+	Balance       int64
 	UpdatedAtLast time.Time
-}
-
-func (wb WalletBalance) IsSufficientFunds(wi *WalletIncrement) error {
-	switch wi.OperationType {
-	case core.OperationTypeDeposit:
-		return nil
-	case core.OperationTypeWithdraw:
-		if wb.Amount < abs(wi.Amount) {
-			return core.ErrInsufficientFunds
-		}
-	default:
-		return core.ErrInvalidOperationType
-	}
-	return nil
 }
 
 func abs(x int64) int64 {

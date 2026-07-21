@@ -36,7 +36,7 @@ func TestWalletHandlers_AddTransaction(t *testing.T) {
 			requestBody: fmt.Sprintf(`{"amount": 100, "operationType": "DEPOSIT", "valletId": "%s"}`, walletID),
 			mockSetup: func(m *mocks.IWalletService) {
 				m.EXPECT().
-					AddDeposit(mock.Anything, mock.MatchedBy(func(model *models.WalletIncrement) bool {
+					AddTransaction(mock.Anything, mock.MatchedBy(func(model *models.WalletIncrement) bool {
 						return model.WalletID == walletID && model.Amount == 100
 					})).
 					Return(nil)
@@ -48,7 +48,7 @@ func TestWalletHandlers_AddTransaction(t *testing.T) {
 			requestBody: fmt.Sprintf(`{"amount": 100, "operationType": "DEPOSIT", "valletId": "%s"}`, walletID),
 			mockSetup: func(m *mocks.IWalletService) {
 				m.EXPECT().
-					AddDeposit(mock.Anything, mock.Anything).
+					AddTransaction(mock.Anything, mock.Anything).
 					Return(core.ErrInsufficientFunds)
 			},
 			expectedStatus: http.StatusUnprocessableEntity,
@@ -70,7 +70,7 @@ func TestWalletHandlers_AddTransaction(t *testing.T) {
 			requestBody: fmt.Sprintf(`{"amount": 100, "operationType": "BALANCE", "valletId": "%s"}`, walletID),
 			mockSetup: func(m *mocks.IWalletService) {
 				m.EXPECT().
-					AddDeposit(mock.Anything, mock.Anything).
+					AddTransaction(mock.Anything, mock.Anything).
 					Return(core.ErrInvalidOperationType)
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -115,7 +115,7 @@ func TestWalletHandlers_GetBalance(t *testing.T) {
 			mockSetup: func(m *mocks.IWalletService) {
 				m.EXPECT().
 					GetBalance(mock.Anything, walletID).
-					Return(&models.WalletBalance{WalletID: walletID, Amount: 1, UpdatedAtLast: ts}, nil)
+					Return(&models.WalletBalance{WalletID: walletID, Balance: 1, UpdatedAtLast: ts}, nil)
 			},
 			expectedStatus: http.StatusOK,
 		},

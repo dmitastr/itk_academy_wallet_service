@@ -14,7 +14,7 @@ import (
 )
 
 type IDatasource interface {
-	AddTransaction(ctx context.Context, increment *models.WalletIncrement) error
+	AddDeposit(ctx context.Context, increment *models.WalletIncrement) error
 	AddWithdrawal(ctx context.Context, increment *models.WalletIncrement) error
 	GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error)
 }
@@ -66,8 +66,8 @@ func (d Datasource) AddWithdrawal(ctx context.Context, increment *models.WalletI
 	return nil
 }
 
-// AddDeposit adds new deposit
-func (d Datasource) AddTransaction(ctx context.Context, increment *models.WalletIncrement) error {
+// AddTransaction adds new deposit
+func (d Datasource) AddDeposit(ctx context.Context, increment *models.WalletIncrement) error {
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
