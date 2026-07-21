@@ -27,7 +27,7 @@ func NewWalletServiceApp(ctx context.Context, cfg config.ConfigProvider, log *lo
 	app := &WalletServiceApp{cfg: cfg, log: log}
 	router := gin.Default()
 
-	pool, err := migrations.Run(ctx, cfg.GetDBConfig(), log)
+	pool, err := migrations.Run(ctx, cfg.GetDBConfig().GetConnString(), log)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database connection: %w", err)
 	}
