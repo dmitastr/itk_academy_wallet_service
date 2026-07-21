@@ -36,25 +36,26 @@ func (w WalletHandlers) UpdateBalance(ctx *gin.Context) {
 	if err != nil {
 		w.log.WithError(err).Error("failed to convert request to model")
 		ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
+		return
 	}
-	if err := w.service.UpdateBalance(ctx, &model); err != nil {
+	if err := w.service.AddDeposit(ctx, &model); err != nil {
 		w.HandleServiceError(ctx, err)
 		w.log.WithError(err).Error("failed to update balance")
-		ctx.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, SuccessResponse{Data: request})
 }
 
 func (w WalletHandlers) GetBalance(ctx *gin.Context) {
-	walletID := ctx.Param("wallet_id")
+	walletID := ctx.Param("walletID")
 	if walletID == "" {
 		w.log.Error(core.ErrMissingWalletID.Error())
 		ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: core.ErrMissingWalletID.Error()})
 		return
 	}
 
-	walletUUID, err := uuid.FromBytes([]byte(walletID))
+	walletUUID, err := uuid.Parse(walletID)
 	if err != nil {
 		w.log.WithError(err).Error("error converting wallet uuid")
 		ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: core.ErrInvalidWalletID.Error()})
@@ -65,6 +66,7 @@ func (w WalletHandlers) GetBalance(ctx *gin.Context) {
 		w.HandleServiceError(ctx, err)
 		w.log.WithError(err).Error("failed to get balance")
 		ctx.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, SuccessResponse{Data: ToResponse(balance)})

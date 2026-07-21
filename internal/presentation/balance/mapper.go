@@ -17,7 +17,7 @@ func (r IncrementRequest) ToModel() (models.WalletIncrement, error) {
 func ToResponse(b *models.WalletBalance) BalanceResponse {
 	return BalanceResponse{
 		WalletID:  b.WalletID.String(),
-		Amount:    b.Amount,
+		Balance:   b.Amount,
 		UpdatedAt: b.UpdatedAtLast.Format(time.RFC3339),
 	}
 }

@@ -6,15 +6,15 @@ import (
 )
 
 type IncrementRequest struct {
-	WalletID      uuid.UUID          `json:"valletId"`
-	OperationType core.OperationType `json:"operationType"`
-	Amount        int64              `json:"amount"`
+	WalletID      uuid.UUID          `json:"valletId" binding:"required,uuid4"`
+	OperationType core.OperationType `json:"operationType" binding:"required"`
+	Amount        int64              `json:"amount" binding:"required"`
 }
 
 type BalanceResponse struct {
 	WalletID  string `json:"valletId"`
-	Amount    int64  `json:"amount"`     // строка, чтобы не терять точность
-	UpdatedAt string `json:"updated_at"` // RFC3339
+	Balance   int64  `json:"balance"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type SuccessResponse struct {

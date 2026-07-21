@@ -13,12 +13,8 @@ type WalletIncrement struct {
 	OperationType core.OperationType
 }
 
-func (i WalletIncrement) CorrectedAmount() error {
+func (i *WalletIncrement) CorrectedAmount() error {
 	var sign int64 = 1
-	if i.Amount < 0 {
-		i.Amount *= -1
-	}
-
 	switch i.OperationType {
 	case core.OperationTypeWithdraw:
 		sign = -1
@@ -27,9 +23,13 @@ func (i WalletIncrement) CorrectedAmount() error {
 	default:
 		return core.ErrInvalidOperationType
 	}
-	i.Amount *= sign
-	return nil
 
+	i.Amount = sign * abs(i.Amount)
+	return nil
+}
+
+func (i *WalletIncrement) GetAbsAmount() int64 {
+	return abs(i.Amount)
 }
 
 type WalletBalance struct {

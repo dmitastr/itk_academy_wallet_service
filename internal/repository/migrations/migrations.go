@@ -37,7 +37,7 @@ func Run(ctx context.Context, config *config.DBConfig, log *logrus.Logger) (*pgx
 	log.Info("Database connection pool established")
 
 	m, err := migrate.New(
-		"file://migrations/migrations_scripts",
+		"file://migrations",
 		config.GetConnString())
 	if err != nil {
 		return nil, err

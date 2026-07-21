@@ -14,7 +14,8 @@ import (
 )
 
 type IDatasource interface {
-	UpdateBalance(ctx context.Context, increment *models.WalletIncrement) error
+	AddDeposit(ctx context.Context, increment *models.WalletIncrement) error
+	AddWithdrawal(ctx context.Context, increment *models.WalletIncrement) error
 	GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error)
 }
 
@@ -30,21 +31,50 @@ func NewDatasource(pool *pgxpool.Pool, log *logrus.Logger) IDatasource {
 	}
 }
 
-func (d Datasource) UpdateBalance(ctx context.Context, increment *models.WalletIncrement) error {
+func (d Datasource) AddWithdrawal(ctx context.Context, increment *models.WalletIncrement) error {
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
 	}
 	defer tx.Rollback(ctx)
 
-	_, err = tx.Exec(ctx, `
-		INSERT INTO wallet_transactions 
-        (amount, wallet_id) 
-   		VALUES ($1, $2)`, increment.Amount, increment.WalletID,
-	)
-
+	_, err = tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtext($1))`, increment.WalletID.String())
 	if err != nil {
-		return fmt.Errorf("insert wallet transaction: %w", err)
+		return fmt.Errorf("acquire advisory lock: %w", err)
+	}
+
+	var currentBalance int64
+	err = tx.QueryRow(ctx, `SELECT COALESCE(SUM(amount), 0) FROM wallet_transactions WHERE wallet_id = $1`,
+		increment.WalletID).Scan(&currentBalance)
+	if err != nil {
+		return fmt.Errorf("could not get current balance: %w", err)
+	}
+
+	if currentBalance < increment.GetAbsAmount() {
+		return core.ErrInsufficientFunds
+	}
+	query := `INSERT INTO wallet_transactions (wallet_id, amount) VALUES ($1, $2)`
+	if _, err = tx.Exec(ctx, query, increment.WalletID, increment.Amount); err != nil {
+		return fmt.Errorf("failed to add transaction: %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("commit tx: %w", err)
+	}
+
+	return nil
+}
+
+func (d Datasource) AddDeposit(ctx context.Context, increment *models.WalletIncrement) error {
+	tx, err := d.pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("begin transaction: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	query := `INSERT INTO wallet_transactions (wallet_id, amount) VALUES ($1, $2)`
+	if _, err = tx.Exec(ctx, query, increment.WalletID, increment.Amount); err != nil {
+		return fmt.Errorf("failed to add transaction: %w", err)
 	}
 
 	if err := tx.Commit(ctx); err != nil {
@@ -56,7 +86,7 @@ func (d Datasource) UpdateBalance(ctx context.Context, increment *models.WalletI
 
 func (d Datasource) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
 	rows, err := d.pool.Query(ctx, `
-		SELECT wallet_id, COALESCE(SUM(amount), 0) AS balance, MAX(updated_at) AS updated_at
+		SELECT wallet_id, COALESCE(SUM(amount), 0) AS balance, MAX(created_at) AS updated_at
 		FROM wallet_transactions
 		WHERE wallet_id = $1
 		GROUP BY wallet_id`, walletID)
