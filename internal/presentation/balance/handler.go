@@ -65,7 +65,6 @@ func (w WalletHandlers) GetBalance(ctx *gin.Context) {
 	if err != nil {
 		w.HandleServiceError(ctx, err)
 		w.log.WithError(err).Error("failed to get balance")
-		ctx.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
 	}
 
