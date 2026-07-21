@@ -74,5 +74,5 @@ func (app *WalletServiceApp) RegisterRoutes(router *gin.Engine, walletHandlers b
 
 	apiPath := router.Group("/api/v1")
 	apiPath.GET(`/wallets/:walletID`, walletHandlers.GetBalance)
-	apiPath.POST(`/wallet`, walletHandlers.UpdateBalance)
+	apiPath.POST(`/wallet`, walletHandlers.AddTransaction)
 }

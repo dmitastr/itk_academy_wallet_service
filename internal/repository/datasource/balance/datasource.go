@@ -14,7 +14,7 @@ import (
 )
 
 type IDatasource interface {
-	AddDeposit(ctx context.Context, increment *models.WalletIncrement) error
+	AddTransaction(ctx context.Context, increment *models.WalletIncrement) error
 	AddWithdrawal(ctx context.Context, increment *models.WalletIncrement) error
 	GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error)
 }
@@ -31,6 +31,7 @@ func NewDatasource(pool *pgxpool.Pool, log *logrus.Logger) IDatasource {
 	}
 }
 
+// AddWithdrawal checks if there is sufficient amount and adds new withdrawal
 func (d Datasource) AddWithdrawal(ctx context.Context, increment *models.WalletIncrement) error {
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
@@ -65,7 +66,8 @@ func (d Datasource) AddWithdrawal(ctx context.Context, increment *models.WalletI
 	return nil
 }
 
-func (d Datasource) AddDeposit(ctx context.Context, increment *models.WalletIncrement) error {
+// AddDeposit adds new deposit
+func (d Datasource) AddTransaction(ctx context.Context, increment *models.WalletIncrement) error {
 	tx, err := d.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %w", err)
@@ -84,6 +86,7 @@ func (d Datasource) AddDeposit(ctx context.Context, increment *models.WalletIncr
 	return nil
 }
 
+// GetBalance get current balance as sum of all transactions
 func (d Datasource) GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error) {
 	rows, err := d.pool.Query(ctx, `
 		SELECT wallet_id, COALESCE(SUM(amount), 0) AS balance, MAX(created_at) AS updated_at

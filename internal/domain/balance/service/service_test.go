@@ -142,7 +142,7 @@ func TestWalletService_AddDeposit(t *testing.T) {
 			tt.mockSetup(mockService)
 
 			s := NewWalletService(mockService, mocklogger.NewTestLogger())
-			err := s.AddDeposit(t.Context(), tt.increment)
+			err := s.AddTransaction(t.Context(), tt.increment)
 
 			assert.Equal(t, tt.expectedError, err)
 		})

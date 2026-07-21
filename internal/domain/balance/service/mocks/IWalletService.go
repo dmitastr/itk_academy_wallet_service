@@ -25,11 +25,11 @@ func (_m *IWalletService) EXPECT() *IWalletService_Expecter {
 }
 
 // AddDeposit provides a mock function with given fields: ctx, walletIncrement
-func (_m *IWalletService) AddDeposit(ctx context.Context, walletIncrement *models.WalletIncrement) error {
+func (_m *IWalletService) AddTransaction(ctx context.Context, walletIncrement *models.WalletIncrement) error {
 	ret := _m.Called(ctx, walletIncrement)
 
 	if len(ret) == 0 {
-		panic("no return value specified for AddDeposit")
+		panic("no return value specified for AddTransaction")
 	}
 
 	var r0 error
@@ -42,7 +42,7 @@ func (_m *IWalletService) AddDeposit(ctx context.Context, walletIncrement *model
 	return r0
 }
 
-// IWalletService_AddDeposit_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddDeposit'
+// IWalletService_AddDeposit_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddTransaction'
 type IWalletService_AddDeposit_Call struct {
 	*mock.Call
 }
@@ -51,7 +51,7 @@ type IWalletService_AddDeposit_Call struct {
 //   - ctx context.Context
 //   - walletIncrement *models.WalletIncrement
 func (_e *IWalletService_Expecter) AddDeposit(ctx interface{}, walletIncrement interface{}) *IWalletService_AddDeposit_Call {
-	return &IWalletService_AddDeposit_Call{Call: _e.mock.On("AddDeposit", ctx, walletIncrement)}
+	return &IWalletService_AddDeposit_Call{Call: _e.mock.On("AddTransaction", ctx, walletIncrement)}
 }
 
 func (_c *IWalletService_AddDeposit_Call) Run(run func(ctx context.Context, walletIncrement *models.WalletIncrement)) *IWalletService_AddDeposit_Call {

@@ -11,7 +11,7 @@ import (
 )
 
 type IWalletService interface {
-	AddDeposit(ctx context.Context, walletIncrement *models.WalletIncrement) error
+	AddTransaction(ctx context.Context, walletIncrement *models.WalletIncrement) error
 	GetBalance(ctx context.Context, walletID uuid.UUID) (*models.WalletBalance, error)
 }
 
@@ -24,7 +24,7 @@ func NewWalletService(ds datasrouce.IDatasource, log *logrus.Logger) IWalletServ
 	return &WalletService{ds: ds, log: log}
 }
 
-func (w WalletService) AddDeposit(ctx context.Context, walletIncrement *models.WalletIncrement) error {
+func (w WalletService) AddTransaction(ctx context.Context, walletIncrement *models.WalletIncrement) error {
 	if err := walletIncrement.CorrectedAmount(); err != nil {
 		w.log.WithError(err).Errorln("Correction amount failed")
 		return err
@@ -33,7 +33,7 @@ func (w WalletService) AddDeposit(ctx context.Context, walletIncrement *models.W
 	var err error
 	switch walletIncrement.OperationType {
 	case core.OperationTypeDeposit:
-		err = w.ds.AddDeposit(ctx, walletIncrement)
+		err = w.ds.AddTransaction(ctx, walletIncrement)
 	case core.OperationTypeWithdraw:
 		err = w.ds.AddWithdrawal(ctx, walletIncrement)
 	default:

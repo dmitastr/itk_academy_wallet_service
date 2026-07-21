@@ -6,6 +6,7 @@ import (
 	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
 )
 
+// ToModel converts from handler layer [IncrementRequest] to domain layer [models.WalletIncrement]
 func (r IncrementRequest) ToModel() (models.WalletIncrement, error) {
 	return models.WalletIncrement{
 		WalletID:      r.WalletID,
@@ -14,6 +15,7 @@ func (r IncrementRequest) ToModel() (models.WalletIncrement, error) {
 	}, nil
 }
 
+// ToResponse converts from domain layer [models.WalletBalance] to handler layer [BalanceResponse]
 func ToResponse(b *models.WalletBalance) BalanceResponse {
 	return BalanceResponse{
 		WalletID:  b.WalletID.String(),

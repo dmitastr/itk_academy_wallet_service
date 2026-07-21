@@ -2,10 +2,12 @@ package balance
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/dmitastr/itk_academy_wallet_service/internal/core"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
@@ -15,9 +17,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
-func TestWalletHandlers_UpdateBalance(t *testing.T) {
+func TestWalletHandlers_AddTransaction(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	walletID := uuid.New()
@@ -27,7 +30,6 @@ func TestWalletHandlers_UpdateBalance(t *testing.T) {
 		requestBody    string
 		mockSetup      func(m *mocks.IWalletService)
 		expectedStatus int
-		expectedBody   string
 	}{
 		{
 			name:        "success",
@@ -82,7 +84,7 @@ func TestWalletHandlers_UpdateBalance(t *testing.T) {
 
 			h := NewWalletHandlers(mockService, mocklogger.NewTestLogger())
 			router := gin.New()
-			router.POST("/wallet", h.UpdateBalance)
+			router.POST("/wallet", h.AddTransaction)
 
 			req := httptest.NewRequest(http.MethodPost, "/wallet", bytes.NewBufferString(tt.requestBody))
 			req.Header.Set("Content-Type", "application/json")
@@ -99,13 +101,13 @@ func TestWalletHandlers_GetBalance(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	walletID := uuid.New()
+	ts := time.Now()
 
 	tests := []struct {
 		name           string
 		walletID       string
 		mockSetup      func(m *mocks.IWalletService)
 		expectedStatus int
-		expectedBody   string
 	}{
 		{
 			name:     "success",
@@ -113,10 +115,9 @@ func TestWalletHandlers_GetBalance(t *testing.T) {
 			mockSetup: func(m *mocks.IWalletService) {
 				m.EXPECT().
 					GetBalance(mock.Anything, walletID).
-					Return(&models.WalletBalance{WalletID: walletID, Amount: 1}, nil)
+					Return(&models.WalletBalance{WalletID: walletID, Amount: 1, UpdatedAtLast: ts}, nil)
 			},
 			expectedStatus: http.StatusOK,
-			expectedBody:   fmt.Sprintf(`{"data": {"balance": 1, "valletId": "%s"}}`, walletID),
 		},
 		{
 			name:     "wallet not found",
@@ -151,8 +152,20 @@ func TestWalletHandlers_GetBalance(t *testing.T) {
 			router.ServeHTTP(w, req)
 
 			assert.Equal(t, tt.expectedStatus, w.Code)
-			if tt.expectedBody != "" {
-				assert.JSONEq(t, tt.expectedBody, w.Body.String())
+
+			if tt.name == "success" {
+				var resp struct {
+					Data struct {
+						WalletID  string `json:"valletId"`
+						Balance   int64  `json:"balance"`
+						UpdatedAt string `json:"updated_at"`
+					} `json:"data"`
+				}
+				require.NoError(t, json.Unmarshal(w.Body.Bytes(), &resp))
+
+				assert.Equal(t, walletID.String(), resp.Data.WalletID)
+				assert.Equal(t, int64(1), resp.Data.Balance)
+				assert.Equal(t, ts.Format(time.RFC3339), resp.Data.UpdatedAt)
 			}
 		})
 	}

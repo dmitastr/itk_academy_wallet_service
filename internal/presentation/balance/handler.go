@@ -11,7 +11,7 @@ import (
 )
 
 type IWalletHandlers interface {
-	UpdateBalance(ctx *gin.Context)
+	AddTransaction(ctx *gin.Context)
 	GetBalance(ctx *gin.Context)
 }
 
@@ -24,7 +24,8 @@ func NewWalletHandlers(service IWalletService, logger *logrus.Logger) IWalletHan
 	return &WalletHandlers{service: service, log: logger}
 }
 
-func (w WalletHandlers) UpdateBalance(ctx *gin.Context) {
+// AddTransaction handles adding new transaction to the wallet
+func (w WalletHandlers) AddTransaction(ctx *gin.Context) {
 	var request IncrementRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		w.log.WithError(err).Error("failed to bind request body")
@@ -38,7 +39,7 @@ func (w WalletHandlers) UpdateBalance(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
-	if err := w.service.AddDeposit(ctx, &model); err != nil {
+	if err := w.service.AddTransaction(ctx, &model); err != nil {
 		w.HandleServiceError(ctx, err)
 		w.log.WithError(err).Error("failed to update balance")
 		return
@@ -47,6 +48,7 @@ func (w WalletHandlers) UpdateBalance(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, SuccessResponse{Data: request})
 }
 
+// GetBalance handles getting balance of a wallet
 func (w WalletHandlers) GetBalance(ctx *gin.Context) {
 	walletID := ctx.Param("walletID")
 	if walletID == "" {
