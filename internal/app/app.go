@@ -10,8 +10,8 @@ import (
 	"github.com/dmitastr/itk_academy_wallet_service/internal/config"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/service"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/presentation/balance"
-	datasrouce "github.com/dmitastr/itk_academy_wallet_service/internal/repository/datasource/balance"
-	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/migrations"
+	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/balance/datasource"
+	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/balance/migrations"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -32,7 +32,7 @@ func NewWalletServiceApp(ctx context.Context, cfg config.ConfigProvider, log *lo
 		return nil, fmt.Errorf("failed to open database connection: %w", err)
 	}
 
-	ds := datasrouce.NewDatasource(pool, log)
+	ds := datasource.NewDatasource(pool, log)
 	walletService := service.NewWalletService(ds, log)
 	walletHandlers := balance.NewWalletHandlers(walletService, log)
 

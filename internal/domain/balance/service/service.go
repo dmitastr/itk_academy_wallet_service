@@ -5,7 +5,7 @@ import (
 
 	"github.com/dmitastr/itk_academy_wallet_service/internal/core"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
-	datasrouce "github.com/dmitastr/itk_academy_wallet_service/internal/repository/datasource/balance"
+	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/balance/datasource"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -16,11 +16,11 @@ type IWalletService interface {
 }
 
 type WalletService struct {
-	ds  datasrouce.IDatasource
+	ds  datasource.IDatasource
 	log *logrus.Logger
 }
 
-func NewWalletService(ds datasrouce.IDatasource, log *logrus.Logger) IWalletService {
+func NewWalletService(ds datasource.IDatasource, log *logrus.Logger) IWalletService {
 	return &WalletService{ds: ds, log: log}
 }
 

@@ -23,7 +23,6 @@ func (w WalletHandlers) HandleServiceError(c *gin.Context, err error) {
 		}
 	}
 
-	// непредвиденная ошибка — не палим детали наружу, логируем
 	w.log.WithError(err).Error("unhandled service error")
 	c.JSON(http.StatusInternalServerError, ErrorResponse{
 		Error: "internal server error",

@@ -7,7 +7,7 @@ import (
 	"github.com/dmitastr/itk_academy_wallet_service/internal/core"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
 	mocklogger "github.com/dmitastr/itk_academy_wallet_service/internal/mocks/mock-logger"
-	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/datasource/balance/mocks"
+	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/balance/datasource/mocks"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/google/uuid"

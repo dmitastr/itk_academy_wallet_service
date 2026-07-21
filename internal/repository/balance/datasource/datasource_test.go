@@ -1,4 +1,4 @@
-package balance
+package datasource
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/dmitastr/itk_academy_wallet_service/internal/domain/balance/models"
 	mocklogger "github.com/dmitastr/itk_academy_wallet_service/internal/mocks/mock-logger"
 	"github.com/dmitastr/itk_academy_wallet_service/internal/mocks/testhelpers"
-	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/migrations"
+	"github.com/dmitastr/itk_academy_wallet_service/internal/repository/balance/migrations"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
